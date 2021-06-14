@@ -10,7 +10,7 @@ regex_upvote = r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|go
 regex_downvote = r"^(\-|\-\-|\-1|👎|noob|Noob|gross|fuck off)$"
 
 
-@EREN.on_message(
+@GOJOU.on_message(
     filters.text
     & filters.group
     & filters.incoming
@@ -43,7 +43,7 @@ async def upvote(_, message):
     )
 
 
-@EREN.on_message(
+@GOJOU.on_message(
     filters.text
     & filters.group
     & filters.incoming
@@ -76,7 +76,7 @@ async def downvote(_, message):
     )
 
 
-@EREN.on_message(filters.command("karma") & filters.group)
+@GOJOU.on_message(filters.command("karma") & filters.group)
 @capture_err
 async def karma(_, message):
     chat_id = message.chat.id
@@ -96,7 +96,7 @@ async def karma(_, message):
             if limit > 9:
                 break
             try:
-                user_name = (await EREN.get_users(int(user_idd))).username
+                user_name = (await GOJOU.get_users(int(user_idd))).username
             except Exception:
                 continue
             msg += f"{user_name} : `{karma_count}`\n"
