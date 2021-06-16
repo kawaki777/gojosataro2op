@@ -18,17 +18,17 @@
 
 __mod_name__ = "VC PLAYER"
 __help__ = """
-          》EREN VC PLAYER《
+          》GOJOU VC PLAYER《
             
 I can now also play music in your group's voice chat
  
-Assistant username:- @FoundingTitanVCRobot
+Assistant username:- @Gojousataromusic_assistant
  
  Setting up 
 1) Make bot admin
 2) Start a voice chat
 3) Try `/play [song name]` for the first time by an admin
-) If userbot joined enjoy music, If not add @FoundingTitanVCRobot to your group manually and retry
+) If userbot joined enjoy music, If not add @Gojousataromusic_assistant to your group manually and retry
  Commands:
  
 • Song Playing 🎶
