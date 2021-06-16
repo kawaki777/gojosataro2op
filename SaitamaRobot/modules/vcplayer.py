@@ -48,7 +48,7 @@ Assistant username:- @Gojousataromusic_assistant
 
 • More tools 📲
   `/admincache`: Updates admin info of your group. Try if bot isn't recognize admin
-  `/userbotjoin`: Invite @FoundingTitanVCRobot to your chat
+  `/userbotjoin`: Invite @Gojousataromusic_assistant to your chat
 Player cmd and all other cmds except /play, /current and /playlist are only for admins with manage group
  PLEASE NOTE THIS SERVICE IS UNSTABLE AND CAN BE STOPPED ANYTIME 
 """
