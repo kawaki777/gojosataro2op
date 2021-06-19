@@ -3,7 +3,8 @@ import math
 import requests
 import cloudscraper
 import urllib.request as urllib
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
+import textwrap
 from html import escape
 from bs4 import BeautifulSoup as bs
 
@@ -87,7 +88,7 @@ def kang(update: Update, context: CallbackContext):
     user = update.effective_user
     args = context.args
     packnum = 0
-    packname = "a" + str(user.id) + "_by_" + context.bot.username
+    packname = "f" + str(user.id) + "_by_" + context.bot.username
     packname_found = 0
     max_stickers = 120
     while packname_found == 0:
@@ -96,7 +97,7 @@ def kang(update: Update, context: CallbackContext):
             if len(stickerset.stickers) >= max_stickers:
                 packnum += 1
                 packname = (
-                    "a"
+                    "f"
                     + str(packnum)
                     + "_"
                     + str(user.id)
@@ -218,7 +219,7 @@ def kang(update: Update, context: CallbackContext):
                 print(e)
 
         else:
-            packname = "animated" + str(user.id) + "_by_" + context.bot.username
+            packname = "animation" + str(user.id) + "_by_" + context.bot.username
             packname_found = 0
             max_stickers = 50
             while packname_found == 0:
@@ -227,7 +228,7 @@ def kang(update: Update, context: CallbackContext):
                     if len(stickerset.stickers) >= max_stickers:
                         packnum += 1
                         packname = (
-                            "animated"
+                            "animation"
                             + str(packnum)
                             + "_"
                             + str(user.id)
@@ -365,7 +366,7 @@ def kang(update: Update, context: CallbackContext):
     else:
         packs = "Please reply to a sticker, or image to kang it!\nOh, by the way. here are your packs:\n"
         if packnum > 0:
-            firstpackname = "a" + str(user.id) + "_by_" + context.bot.username
+            firstpackname = "f" + str(user.id) + "_by_" + context.bot.username
             for i in range(0, packnum + 1):
                 if i == 0:
                     packs += f"[pack](t.me/addstickers/{firstpackname})\n"
@@ -453,6 +454,7 @@ def makepack_internal(
         )
     else:
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
+
 
 
 
@@ -585,6 +587,7 @@ __help__ = """
  • `/stickerid` : reply to a sticker to me to tell you its file ID.
  • `/getsticker` : reply to a sticker to me to upload its raw PNG file.
  • `/kang` : reply to a sticker to add it to your pack.
+ • `/mmf` : memefiy any sticker and image.
  • `/stickers` : Find stickers for given term on combot sticker catalogue
 """
 
@@ -598,4 +601,3 @@ dispatcher.add_handler(STICKERS_HANDLER)
 dispatcher.add_handler(STICKERID_HANDLER)
 dispatcher.add_handler(GETSTICKER_HANDLER)
 dispatcher.add_handler(KANG_HANDLER)
-
