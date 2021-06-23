@@ -136,7 +136,7 @@ async def download_video(v_url):
         os.remove(f"{rip_data['id']}.mp4")
 
 
-@register(pattern="^/video (.*)")
+# @register(pattern="^/video (.*)")
 async def download_video(v_url):  
     lazy = v_url ; sender = await lazy.get_sender() ; me = await lazy.client.get_me()
     if not sender.id == me.id:
@@ -255,13 +255,11 @@ async def download_video(v_url):
 __help__ = """
  *You can either enter just the song name or both the artist and song
   name. *
-
- - `/song` <songname artist(optional)>: uploads the song in it's best quality available
- - `/saavn` <songname>: uploads the song from saavn.
- - `/video` <songname artist(optional)>: uploads the video song in it's best quality available
- - `/lyrics` <song>: returns the lyrics of that song.
- - `/glyrics <artist - songname>`: Advanced lyrics searching.
-
+ • `/song` <songname artist(optional)>: uploads the song in it's best quality available
+ • `deezer` <songname> uploads the song from deezer
+ • `/saavn` <songname>: uploads the song from saavn.
+ • `/video` <songname artist(optional)>: uploads the video song in it's best quality available
+ • `/lyrics` <song>: returns the lyrics of that song.
 """
 
 __mod_name__ = "Music"
