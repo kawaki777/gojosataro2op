@@ -15,7 +15,7 @@ from telegram.utils.helpers import mention_html
 
 from SaitamaRobot import dispatcher
 from SaitamaRobot.modules.disable import DisableAbleCommandHandler
-from SaitamaRobot.events import register as Gojo
+from SaitamaRobot.events import register as Eren
 from SaitamaRobot import LOGGER
 from SaitamaRobot import TEMP_DOWNLOAD_DIRECTORY
 from SaitamaRobot import telethn as bot
@@ -23,7 +23,7 @@ from SaitamaRobot import telethn as bot
 combot_stickers_url = "https://combot.org/telegram/stickers?q="
 
 
-@run_async
+
 def stickerid(update: Update, context: CallbackContext):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
@@ -44,7 +44,7 @@ def stickerid(update: Update, context: CallbackContext):
         )
 
 
-@run_async
+
 def cb_sticker(update: Update, context: CallbackContext):
     msg = update.effective_message
     split = msg.text.split(" ", 1)
@@ -82,7 +82,7 @@ def getsticker(update: Update, context: CallbackContext):
         )
 
 
-@run_async
+
 def kang(update: Update, context: CallbackContext):
     msg = update.effective_message
     user = update.effective_user
@@ -137,7 +137,7 @@ def kang(update: Update, context: CallbackContext):
         elif msg.reply_to_message.sticker and msg.reply_to_message.sticker.emoji:
             sticker_emoji = msg.reply_to_message.sticker.emoji
         else:
-            sticker_emoji = "🤔"
+            sticker_emoji = "👀"
 
         if not is_animated:
             try:
@@ -592,10 +592,10 @@ __help__ = """
 """
 
 __mod_name__ = "Stickers"
-STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
-GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
-KANG_HANDLER = DisableAbleCommandHandler(["kang", "steal"], kang, admin_ok=True)
-STICKERS_HANDLER = DisableAbleCommandHandler("stickers", cb_sticker)
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid, run_async=True)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker, run_async=True)
+KANG_HANDLER = DisableAbleCommandHandler(["kang", "steal"], kang, admin_ok=True, run_async=True)
+STICKERS_HANDLER = DisableAbleCommandHandler("stickers", cb_sticker, run_async=True)
 
 dispatcher.add_handler(STICKERS_HANDLER)
 dispatcher.add_handler(STICKERID_HANDLER)
