@@ -1,74 +1,123 @@
-import os
-import requests
-import aiohttp
-import youtube_dl
+from SaitamaRobot.modules.helper_funcs.chat_status import user_admin
+from SaitamaRobot.modules.disable import DisableAbleCommandHandler
+from SaitamaRobot import dispatcher
 
-from pyrogram import filters
-from SaitamaRobot import pbot
-from youtube_search import YoutubeSearch
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import ParseMode, Update
+from telegram.ext.dispatcher import run_async
+from telegram.ext import CallbackContext, Filters, CommandHandler
 
+MARKDOWN_HELP = f"""
+Markdown is a very powerful formatting tool supported by telegram. {dispatcher.bot.first_name} has some enhancements, to make sure that \
+saved messages are correctly parsed, and to allow you to create buttons.
 
+• <code>_italic_</code>: wrapping text with '_' will produce italic text
+• <code>*bold*</code>: wrapping text with '*' will produce bold text
+• <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
+• <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
+and tapping on it will open the page at <code>someURL</code>.
+<b>Example:</b><code>[test](example.com)</code>
 
-def time_to_seconds(time):
-    stringt = str(time)
-    return sum(int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(':'))))
+• <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
+buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
+will be the url which is opened.
+<b>Example:</b> <code>[This is a button](buttonurl:example.com)</code>
 
+If you want multiple buttons on the same line, use :same, as such:
+<code>[one](buttonurl://example.com)
+[two](buttonurl://google.com:same)</code>
+This will create two buttons on a single line, instead of one button per line.
 
-@pbot.on_message(filters.command(['song']))
-def song(client, message):
-
-    user_id = message.from_user.id 
-    user_name = message.from_user.first_name 
-    rpk = "["+user_name+"](tg://user?id="+str(user_id)+")"
-
-    query = ''
-    for i in message.command[1:]:
-        query += ' ' + str(i)
-    print(query)
-    m = message.reply('🔎 Finding the song...')
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        #print(results)
-        title = results[0]["title"][:40]       
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f'thumb{title}.jpg'
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, 'wb').write(thumb.content)
+Keep in mind that your message <b>MUST</b> contain some text other than just a button!
+"""
 
 
-        duration = results[0]["duration"]
-        url_suffix = results[0]["url_suffix"]
-        views = results[0]["views"]
 
-    except Exception as e:
-        m.edit(
-            "✖️ Found Nothing. Sorry.\n\nTry another keywork or maybe spell it properly."
+@user_admin
+def echo(update: Update, context: CallbackContext):
+    args = update.effective_message.text.split(None, 1)
+    message = update.effective_message
+
+    if message.reply_to_message:
+        message.reply_to_message.reply_text(
+            args[1], parse_mode="MARKDOWN", disable_web_page_preview=True,
         )
-        print(str(e))
+    else:
+        message.reply_text(
+            args[1], quote=False, parse_mode="MARKDOWN", disable_web_page_preview=True,
+        )
+    message.delete()
+
+
+def markdown_help_sender(update: Update):
+    update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
+    update.effective_message.reply_text(
+        "Try forwarding the following message to me, and you'll see, and Use #test!",
+    )
+    update.effective_message.reply_text(
+        "/save test This is a markdown test. _italics_, *bold*, code, "
+        "[URL](example.com) [button](buttonurl:github.com) "
+        "[button2](buttonurl://google.com:same)",
+    )
+
+
+
+def markdown_help(update: Update, context: CallbackContext):
+    if update.effective_chat.type != "private":
+        update.effective_message.reply_text(
+            "Contact me in pm",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "Markdown help",
+                            url=f"t.me/{context.bot.username}?start=markdownhelp",
+                        ),
+                    ],
+                ],
+            ),
+        )
         return
-    m.edit("`Downloading Song... Please wait ⏱`")
-    try:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-        rep = f'🎙 **Title**: [{title[:35]}]({link})\n🎬 **Source**: YouTube\n⏱️ **Duration**: `{duration}`\n👁‍🗨 **Views**: `{views}`\n📤 **By**: @GojoSataro_Robot'
-        secmul, dur, dur_arr = 1, 0, duration.split(':')
-        for i in range(len(dur_arr)-1, -1, -1):
-            dur += (int(dur_arr[i]) * secmul)
-            secmul *= 60
-        message.reply_audio(audio_file, caption=rep, thumb=thumb_name, parse_mode='md', title=title, duration=dur)
-        m.delete()
-    except Exception as e:
-        m.edit('❌ Error')
-        print(e)
-
-    try:
-        os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as e:
-        print(e)
+    markdown_help_sender(update)
 
 
+__help__ = """
+*Available commands:*
+*Markdown:*
+ • `/markdownhelp`*:* quick summary of how markdown works in telegram - can only be called in private chats
+*Paste:*
+ • `/paste`*:* Saves replied content to `nekobin.com` and replies with a url
+*React:*
+ • `/react`*:* Reacts with a random reaction
+*Urban Dictonary:*
+ • `/ud <word>`*:* Type the word or expression you want to search use
+*Wikipedia:*
+ • `/wiki <query>`*:* wikipedia your query
+*Wallpapers:*
+ • `/wall <query>`*:* get a wallpaper from wall.alphacoders.com
+*Currency converter:*
+ • `/cash`*:* currency converter
+Example:
+ `/cash 1 USD INR`
+      _OR_
+ `/cash 1 usd inr`
+Output: `1.0 USD = 75.505 INR`
+*Timezones:*
+ • `/time <query>`*:* Gives information about a timezone.
+
+*Available queries:* Country Code/Country Name/Timezone Name
+• 🕐 [Timezones list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+"""
+
+ECHO_HANDLER = DisableAbleCommandHandler("echo", echo, filters=Filters.chat_type.groups, run_async=True)
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, run_async=True)
+
+dispatcher.add_handler(ECHO_HANDLER)
+dispatcher.add_handler(MD_HELP_HANDLER)
+
+__mod_name__ = "Extras"
+__command_list__ = ["id", "echo"]
+__handlers__ = [
+    ECHO_HANDLER,
+    MD_HELP_HANDLER,
+]
