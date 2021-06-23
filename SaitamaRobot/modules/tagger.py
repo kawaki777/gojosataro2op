@@ -1,4 +1,3 @@
-
 #This Module (Tagall) Is Taken From @zoldycktmbot
 
 from telegram import ParseMode
@@ -19,7 +18,6 @@ from SaitamaRobot.modules.helper_funcs.extraction import extract_user_and_text
 from SaitamaRobot.modules.helper_funcs.alternate import typing_action
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -67,7 +65,6 @@ def addtag(update, context):
         parse_mode=ParseMode.HTML
     )
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -109,7 +106,7 @@ def removetag(update, context):
         parse_mode=ParseMode.HTML
     )
 
-@run_async
+
 def tagg_all_button(update, context):
     query = update.callback_query
     chat = update.effective_chat  
@@ -144,7 +141,7 @@ def tagg_all_button(update, context):
                                               text="You're not the user being added in tag list!"
                                               )           
             
-@run_async
+
 @typing_action
 def untagme(update, context): 
     chat = update.effective_chat  
@@ -165,7 +162,7 @@ def untagme(update, context):
         parse_mode=ParseMode.HTML
     )
 
-@run_async
+
 @typing_action
 def tagme(update, context): 
     chat = update.effective_chat  
@@ -186,7 +183,7 @@ def tagme(update, context):
         parse_mode=ParseMode.HTML
     )
     
-@run_async
+
 @bot_admin
 @user_admin
 @typing_action
@@ -225,7 +222,7 @@ def tagall(update, context):
             "Tagall list is empty!"
         )
 
-@run_async
+
 @bot_admin
 @user_admin
 @typing_action
@@ -254,13 +251,13 @@ Tagger is an essential feature to mention all subscribed members in the group. A
 - /removetag <userhandle>: remove a user to chat tag list. (via handle, or reply)
 """    
 
-TAG_ALL_HANDLER = DisableAbleCommandHandler("tagall", tagall, filters=Filters.group)
-UNTAG_ALL_HANDLER = DisableAbleCommandHandler("untagall", untagall, filters=Filters.group)
-UNTAG_ME_HANDLER = CommandHandler("untagme", untagme, filters=Filters.group)
-TAG_ME_HANDLER = CommandHandler("tagme", tagme, filters=Filters.group)
-ADD_TAG_HANDLER = DisableAbleCommandHandler("addtag", addtag, pass_args=True, filters=Filters.group)
-REMOVE_TAG_HANDLER = DisableAbleCommandHandler("removetag", removetag, pass_args=True, filters=Filters.group)
-TAGALL_CALLBACK_HANDLER = CallbackQueryHandler(tagg_all_button, pattern=r"tagall_")
+TAG_ALL_HANDLER = DisableAbleCommandHandler("tagall", tagall, filters=Filters.chat_type.groups, run_async=True)
+UNTAG_ALL_HANDLER = DisableAbleCommandHandler("untagall", untagall, filters=Filters.chat_type.groups, run_async=True)
+UNTAG_ME_HANDLER = CommandHandler("untagme", untagme, filters=Filters.chat_type.groups, run_async=True)
+TAG_ME_HANDLER = CommandHandler("tagme", tagme, filters=Filters.chat_type.groups, run_async=True)
+ADD_TAG_HANDLER = DisableAbleCommandHandler("addtag", addtag, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
+REMOVE_TAG_HANDLER = DisableAbleCommandHandler("removetag", removetag, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
+TAGALL_CALLBACK_HANDLER = CallbackQueryHandler(tagg_all_button, pattern=r"tagall_", run_async=True)
 
 
 
