@@ -339,7 +339,6 @@ if is_module_loaded(FILENAME):
 
     __help__ = """
     • `/cmds`*:* check the current status of disabled commands
-
     *Admins only:*
     • `/enable <cmd name>`*:* enable that command
     • `/disable <cmd name>`*:* disable that command
