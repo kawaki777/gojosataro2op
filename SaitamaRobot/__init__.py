@@ -6,15 +6,8 @@ import spamwatch
 from pyrogram import Client, errors
 import telegram.ext as tg
 from telethon import TelegramClient
-from motor import motor_asyncio
-from odmantic import AIOEngine
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError
+from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from redis import StrictRedis
-from Python_ARQ import ARQ
-import aiohttp
-from aiohttp import ClientSession
-
 
 StartTime = time.time()
 
@@ -48,23 +41,23 @@ if ENV:
     OWNER_USERNAME = os.environ.get("OWNER_USERNAME", None)
 
     try:
-        DRAGONS = set(int(x) for x in os.environ.get("TITANSHIFTERS", "").split())
-        DEV_USERS = set(int(x) for x in os.environ.get("ACKERMANS", "").split())
+        DRAGONS = set(int(x) for x in os.environ.get("DRAGONS", "").split())
+        DEV_USERS = set(int(x) for x in os.environ.get("DEV_USERS", "").split())
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        DEMONS = set(int(x) for x in os.environ.get("ROYALS", "").split())
+        DEMONS = set(int(x) for x in os.environ.get("DEMONS", "").split())
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        WOLVES = set(int(x) for x in os.environ.get("GARRISONS", "").split())
+        WOLVES = set(int(x) for x in os.environ.get("WOLVES", "").split())
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
     try:
-        TIGERS = set(int(x) for x in os.environ.get("SCOUTS", "").split())
+        TIGERS = set(int(x) for x in os.environ.get("TIGERS", "").split())
     except ValueError:
         raise Exception("Your tiger users list does not contain valid integers.")
 
@@ -87,19 +80,13 @@ if ENV:
     ALLOW_EXCL = os.environ.get("ALLOW_EXCL", False)
     CASH_API_KEY = os.environ.get("CASH_API_KEY", None)
     TIME_API_KEY = os.environ.get("TIME_API_KEY", None)
+    AI_API_KEY = os.environ.get("AI_API_KEY", None)
     WALL_API = os.environ.get("WALL_API", None)
-    MONGO_URI = os.environ.get("MONGO_DB_URI", None)
-    MONGO_PORT = int(os.environ.get("MONGO_PORT", None))
-    MONGO_DB = os.environ.get("MONGO_DB", None)
+    MONGO_DB_URI = os.environ.get("MONGO_DB_URI", None)
     REDIS_URL = os.environ.get("REDIS_URL", None)
-    ARQ_API = os.environ.get("ARQ_API", None)
-    BOT_ID = int(os.environ.get("BOT_ID", None))
     SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)
     SPAMWATCH_SUPPORT_CHAT = os.environ.get("SPAMWATCH_SUPPORT_CHAT", None)
     SPAMWATCH_API = os.environ.get("SPAMWATCH_API", None)
-    ARQ_API_URL =  "https://thearq.tech"
-    ARQ_API_KEY = ARQ_API
-    
 
     ALLOW_CHATS = os.environ.get("ALLOW_CHATS", True)
 
@@ -122,23 +109,23 @@ else:
     OWNER_USERNAME = Config.OWNER_USERNAME
     ALLOW_CHATS = Config.ALLOW_CHATS
     try:
-        DRAGONS = set(int(x) for x in Config.TITANSHIFTERS or [])
-        DEV_USERS = set(int(x) for x in Config.ACKERMANS or [])
+        DRAGONS = set(int(x) for x in Config.DRAGONS or [])
+        DEV_USERS = set(int(x) for x in Config.DEV_USERS or [])
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        DEMONS = set(int(x) for x in Config.ROYALS or [])
+        DEMONS = set(int(x) for x in Config.DEMONS or [])
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        WOLVES = set(int(x) for x in Config.GARRISONS or [])
+        WOLVES = set(int(x) for x in Config.WOLVES or [])
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
     try:
-        TIGERS = set(int(x) for x in Config.SCOUTS or [])
+        TIGERS = set(int(x) for x in Config.TIGERS or [])
     except ValueError:
         raise Exception("Your tiger users list does not contain valid integers.")
 
@@ -150,7 +137,7 @@ else:
     API_ID = Config.API_ID
     API_HASH = Config.API_HASH
 
-    DB_URI = Config.DATABASE_URL
+    DB_URI = Config.SQLALCHEMY_DATABASE_URI
     DONATION_LINK = Config.DONATION_LINK
     LOAD = Config.LOAD
     NO_LOAD = Config.NO_LOAD
@@ -161,20 +148,12 @@ else:
     ALLOW_EXCL = Config.ALLOW_EXCL
     CASH_API_KEY = Config.CASH_API_KEY
     TIME_API_KEY = Config.TIME_API_KEY
-    REDIS_URL = Config.REDIS_URL
+    AI_API_KEY = Config.AI_API_KEY
     WALL_API = Config.WALL_API
     SUPPORT_CHAT = Config.SUPPORT_CHAT
     SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
     SPAMWATCH_API = Config.SPAMWATCH_API
     INFOPIC = Config.INFOPIC
-    APP_ID = Config.APP_ID
-    APP_HASH = Config.APP_HASH
-    MONGO_URI = Config.MONGO_DB_URI
-    MONGO_PORT = Config.MONGO_PORT
-    MONGO_DB = Config.MONGO_DB
-    ARQ_API = Config.ARQ_API
-    BOT_ID = Config.BOT_ID
-    
 
     try:
         BL_CHATS = set(int(x) for x in Config.BL_CHATS or [])
@@ -218,15 +197,8 @@ updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 telethn = TelegramClient("eren", API_ID, API_HASH)
 dispatcher = updater.dispatcher
 pbot = Client("ErenPyro", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
-mongodb = MongoClient(MONGO_URI, MONGO_PORT)[MONGO_DB]
-motor = motor_asyncio.AsyncIOMotorClient(MONGO_URI)
-db = motor[MONGO_DB]
-engine = AIOEngine(motor, MONGO_DB)
-print("[INFO]: INITIALZING AIOHTTP SESSION")
-aiohttpsession = ClientSession()
-# ARQ Client
-print("[INFO]: INITIALIZING ARQ CLIENT")
-arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
+mongo_client = MongoClient(MONGO_DB_URI)
+db = mongo_client.SaitamaRobot
 
 DRAGONS = list(DRAGONS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
